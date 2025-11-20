@@ -11,10 +11,33 @@ To easily execute, the main class needs to be provided in the `pom.xml`:
 
 Then, Maven can execute the main:
 ```bash
-mvn -q exec:java
+mvn compile exec:java
 ```
-where `-q` removes the `[INFO]` from Maven to only see the output of the jvm.
 
-## Unsafe warnings
+### Disable maven unsafe warnings
 
-Maven uses unsafe commands that are currently deprecated in recent Java. To hide then, create a file `.mvn/jvm.config` and add `--sun-misc-unsafe-memory-access=allow` to it.
+Maven uses unsafe commands that are currently deprecated in recent Java. To hide then, add `--sun-misc-unsafe-memory-access=allow` to `.mvn/jvm.config`.
+
+### Make unsafe conversions as errors
+
+In the `pow.xml`, add inside the maven compiler plugin
+```xml
+<plugin>
+  <artifactId>maven-compiler-plugin</artifactId>
+  ...
+</plugin>
+```
+the following configuration
+```xml
+  <configuration>
+      <compilerArgs>
+          <arg>-Xlint:unchecked</arg>
+          <arg>-Werror</arg>
+      </compilerArgs>
+  </configuration>
+```
+
+### Disable `[Info]` while showing `[Warning]`
+
+To show `[Warning]` but no `[Info]` in the maven output, add `-Dorg.slf4j.simpleLogger.defaultLogLevel=warn` to `.mvn/jvm.config`.
+
